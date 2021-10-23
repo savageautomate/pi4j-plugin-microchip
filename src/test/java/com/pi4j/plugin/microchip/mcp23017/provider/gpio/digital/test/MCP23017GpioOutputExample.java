@@ -56,11 +56,10 @@ public class MCP23017GpioOutputExample {
                 .name("LED Flasher")
                 .address(PIN_LED)
                 .shutdown(DigitalState.LOW)
-                .initial(DigitalState.LOW)
-                .provider(MCP23017DigitalOutputProvider.ID);
+                .initial(DigitalState.LOW);
 
         // create the LED output GPIO pin instance
-        var led = pi4j.create(ledConfig);
+        var led = provider.create(ledConfig);
 
         System.out.println("----------------------------------------------------------");
         System.out.println("PI4J I/O REGISTRY");
