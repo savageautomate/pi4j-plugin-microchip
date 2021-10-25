@@ -28,6 +28,7 @@ package com.pi4j.plugin.microchip.mcp23017.provider.gpio.digital;
  */
 
 import com.pi4j.io.gpio.digital.DigitalOutputProvider;
+import com.pi4j.io.i2c.I2C;
 import com.pi4j.plugin.microchip.MicrochipPlugin;
 import com.pi4j.plugin.microchip.provider.gpio.digital.MicrochipDigitalOutputProvider;
 
@@ -49,4 +50,8 @@ public interface MCP23017DigitalOutputProvider extends MicrochipDigitalOutputPro
     static MCP23017DigitalOutputProvider newInstance() {
         return new MCP23017DigitalOutputProviderImpl();
     }
+
+    // TODO :: Are there additional configuration items that need to be supported?
+    void setup(Object ... args);
+    void setup(I2C i2c);
 }

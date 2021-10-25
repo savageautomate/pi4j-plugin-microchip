@@ -3,12 +3,15 @@ package com.pi4j.plugin.microchip.mcp23017.provider.gpio.digital.test;
 import com.pi4j.Pi4J;
 import com.pi4j.io.gpio.digital.DigitalOutput;
 import com.pi4j.io.gpio.digital.DigitalState;
+import com.pi4j.io.i2c.I2C;
 import com.pi4j.plugin.microchip.mcp23017.provider.gpio.digital.MCP23017DigitalInputProvider;
 import com.pi4j.plugin.microchip.mcp23017.provider.gpio.digital.MCP23017DigitalOutputProvider;
 
 public class MCP23017GpioOutputExample {
 
     private static final int PIN_LED = 1;
+    private static final int MCP23017_I2C_BUS = 1;
+    private final static int MCP23017_I2C_DEVICE = 0x20;
 
     /**
      * This application blinks a led and counts the number the button is pressed. The blink speed increases with each
@@ -42,12 +45,15 @@ public class MCP23017GpioOutputExample {
         pi4j.providers().describe().print(System.out);
         System.out.println("----------------------------------------------------------");
 
+        // create I2C instance for communication with MCP23017
+        I2C mcp23017_i2c = pi4j.i2c().create(MCP23017_I2C_BUS, MCP23017_I2C_DEVICE);
+
         // if we don't have an immediate reference to the actual provider,
         // we can obtain it from the Pi4J context using it's ID string
         MCP23017DigitalOutputProvider provider = pi4j.provider(MCP23017DigitalOutputProvider.ID);
 
-        // TODO :: we need to configure the MCP23017 provider with the necessary SPI/I2C config and any other startup configs
-        //provider.configure();
+        // TODO :: we need to configure the MCP23017 provider with the necessary I2C instance
+        provider.setup(mcp23017_i2c);
 
         // Here we will create I/O interfaces for a (GPIO) digital output
         // pin. We will use the MCP23017 digital output provider

@@ -27,6 +27,7 @@ package com.pi4j.plugin.microchip.mcp23017.provider.gpio.digital;
  * #L%
  */
 
+import com.pi4j.io.i2c.I2C;
 import com.pi4j.plugin.microchip.MicrochipPlugin;
 import com.pi4j.plugin.microchip.provider.gpio.digital.MicrochipDigitalInputProvider;
 
@@ -48,4 +49,8 @@ public interface MCP23017DigitalInputProvider extends MicrochipDigitalInputProvi
     static MCP23017DigitalInputProvider newInstance() {
         return new MCP23017DigitalInputProviderImpl();
     }
+
+    // TODO :: Are there additional configuration items that need to be supported?
+    void setup(Object ... args);
+    void setup(I2C i2c);
 }
