@@ -28,7 +28,6 @@ package com.pi4j.plugin.microchip.provider.gpio.digital;
  */
 
 import com.pi4j.io.gpio.digital.DigitalOutputProvider;
-import com.pi4j.plugin.microchip.MicrochipPlugin;
 
 /**
  * <p>MicrochipDigitalOutputProvider interface.</p>

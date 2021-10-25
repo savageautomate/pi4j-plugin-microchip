@@ -29,13 +29,11 @@ package com.pi4j.plugin.microchip.mcp23017.provider.gpio.digital;
 
 import com.pi4j.io.gpio.digital.DigitalInput;
 import com.pi4j.io.gpio.digital.DigitalInputConfig;
-import com.pi4j.io.gpio.digital.DigitalInputProviderBase;
 import com.pi4j.io.i2c.I2C;
+import com.pi4j.plugin.microchip.mcp23017.MCP23017Device;
 import com.pi4j.plugin.microchip.provider.gpio.digital.MicrochipDigitalInput;
 import com.pi4j.plugin.microchip.provider.gpio.digital.MicrochipDigitalInputProviderBase;
 import com.pi4j.provider.exception.ProviderException;
-
-import java.util.Arrays;
 
 /**
  * <p>MockDigitalInputProviderImpl class.</p>
@@ -45,7 +43,7 @@ import java.util.Arrays;
  */
 public class MCP23017DigitalInputProviderImpl extends MicrochipDigitalInputProviderBase implements MCP23017DigitalInputProvider {
 
-    protected I2C i2c = null;
+    protected MCP23017Device device = null;
 
     /**
      * <p>Constructor for MockDigitalInputProviderImpl.</p>
@@ -57,7 +55,14 @@ public class MCP23017DigitalInputProviderImpl extends MicrochipDigitalInputProvi
     /** {@inheritDoc} */
     @Override
     public DigitalInput create(DigitalInputConfig config) {
-        return new MicrochipDigitalInput(this, config);
+
+        // validate provider setup
+        if(this.device == null){
+            throw new ProviderException("MCP23017DigitalInputProvider::setup(...) has note been called; this provider must be configured using the setup() method prior to creating I/O instances.");
+        }
+
+        // create new input I/O instance
+        return new MicrochipDigitalInput(this, device, config);
     }
 
     @Override
@@ -73,15 +78,18 @@ public class MCP23017DigitalInputProviderImpl extends MicrochipDigitalInputProvi
             throw new ProviderException("MCP23017DigitalInputProvider::setup(...) is missing required I2C parameter.");
         }
 
-        // set internal I2C reference
-        this.i2c = (I2C) args[0];
+        // validate first call to setup
+        if(this.device != null){
+            throw new ProviderException("MCP23017DigitalInputProvider::setup(...) has already been called; this method is not reentrant.");
+        }
 
-        // TODO :: Initialize communication with I2C; validate communication with I2C
-        //initializeI2C();
+        // create RAW device to communicate with chip via I2C instance
+        this.device = new MCP23017Device ((I2C) args[0]);
     }
 
     @Override
     public void setup(I2C i2c) throws ProviderException {
-        this.setup((i2c));
+        Object[] args = new Object[] { i2c };
+        this.setup(args);
     }
 }

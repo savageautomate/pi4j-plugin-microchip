@@ -32,7 +32,10 @@ import com.pi4j.context.Context;
 import com.pi4j.exception.InitializeException;
 import com.pi4j.exception.ShutdownException;
 import com.pi4j.io.exception.IOException;
-import com.pi4j.io.gpio.digital.*;
+import com.pi4j.io.gpio.digital.DigitalOutput;
+import com.pi4j.io.gpio.digital.DigitalOutputBase;
+import com.pi4j.io.gpio.digital.DigitalOutputConfig;
+import com.pi4j.io.gpio.digital.DigitalState;
 
 
 /**
@@ -42,14 +45,18 @@ import com.pi4j.io.gpio.digital.*;
  * @version $Id: $Id
  */
 public class MicrochipDigitalOutput extends DigitalOutputBase implements DigitalOutput {
+
+    protected final MicrochipGpioDevice device;
+
     /**
      * <p>Constructor for MicrochipDigitalOutput.</p>
      *
      * @param provider a {@link com.pi4j.io.gpio.digital.DigitalOutputProvider} object.
      * @param config a {@link com.pi4j.io.gpio.digital.DigitalOutputConfig} object.
      */
-    public MicrochipDigitalOutput(MicrochipDigitalOutputProvider provider, DigitalOutputConfig config){
+    public MicrochipDigitalOutput(MicrochipDigitalOutputProvider provider, MicrochipGpioDevice device, DigitalOutputConfig config){
         super(provider, config);
+        this.device = device;
     }
 
     /** {@inheritDoc} */
@@ -57,25 +64,40 @@ public class MicrochipDigitalOutput extends DigitalOutputBase implements Digital
     public DigitalOutput initialize(Context context) throws InitializeException {
         super.initialize(context);
 
-        // TODO :: Implement GPIO OUTPUT pin initialization
-        // TODO :: Implement GPIO OUTPUT pin initial state
-        // TODO :: Implement GPIO OUTPUT pin mode
+        // GPIO OUTPUT pin initialization
+        // initialize this I/O instance with the underlying hardware chip
+        // perform any communication with the hardware to configure this chip for OUTPUT
+        device.initialize(this);
 
-        // configure GPIO pin as an OUTPUT pin
+        // set GPIO OUTPUT pin initial state
+        if(config.getInitialState() != DigitalState.UNKNOWN){
+            state(config.getInitialState());
+        }
+
+        // return this IO instance
         return this;
     }
 
     /** {@inheritDoc} */
     @Override
     public DigitalOutput state(DigitalState state) throws IOException {
-        // TODO :: Implement GPIO OUTPUT pin state instruction request
+        // set device state
+        device.state(this, state);
+
+        // return this IO instance
         return super.state(state);
     }
 
     /** {@inheritDoc} */
     @Override
     public DigitalOutput shutdown(Context context) throws ShutdownException {
-        // TODO :: Implement GPIO OUTPUT pin shutdown logic
-        return super.shutdown(context);
+        // perform any shutdown required
+        super.shutdown(context);
+
+        // perform any shutdown required
+        device.shutdown(this, context);
+
+        // return this IO instance
+        return this;
     }
 }

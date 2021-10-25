@@ -29,6 +29,7 @@ package com.pi4j.plugin.microchip.mcp23017.provider.gpio.digital;
 
 import com.pi4j.io.i2c.I2C;
 import com.pi4j.plugin.microchip.MicrochipPlugin;
+import com.pi4j.plugin.microchip.mcp23017.MCP23017;
 import com.pi4j.plugin.microchip.provider.gpio.digital.MicrochipDigitalInputProvider;
 
 /**
@@ -37,7 +38,7 @@ import com.pi4j.plugin.microchip.provider.gpio.digital.MicrochipDigitalInputProv
  * @author Robert Savage (<a href="http://www.savagehomeautomation.com">http://www.savagehomeautomation.com</a>)
  * @version $Id: $Id
  */
-public interface MCP23017DigitalInputProvider extends MicrochipDigitalInputProvider {
+public interface MCP23017DigitalInputProvider extends MicrochipDigitalInputProvider, MCP23017 {
     String NAME = MicrochipPlugin.MCP23017_DIGITAL_INPUT_PROVIDER_NAME;
     String ID = MicrochipPlugin.MCP23017_DIGITAL_INPUT_PROVIDER_ID;
 

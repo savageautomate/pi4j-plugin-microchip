@@ -29,8 +29,8 @@ package com.pi4j.plugin.microchip.mcp23017.provider.gpio.digital;
 
 import com.pi4j.io.gpio.digital.DigitalOutput;
 import com.pi4j.io.gpio.digital.DigitalOutputConfig;
-import com.pi4j.io.gpio.digital.DigitalOutputProviderBase;
 import com.pi4j.io.i2c.I2C;
+import com.pi4j.plugin.microchip.mcp23017.MCP23017Device;
 import com.pi4j.plugin.microchip.provider.gpio.digital.MicrochipDigitalOutput;
 import com.pi4j.plugin.microchip.provider.gpio.digital.MicrochipDigitalOutputProviderBase;
 import com.pi4j.provider.exception.ProviderException;
@@ -43,7 +43,7 @@ import com.pi4j.provider.exception.ProviderException;
  */
 public class MCP23017DigitalOutputProviderImpl extends MicrochipDigitalOutputProviderBase implements MCP23017DigitalOutputProvider {
 
-    protected I2C i2c = null;
+    protected MCP23017Device device = null;
 
     /**
      * <p>Constructor for MockDigitalOutputProviderImpl.</p>
@@ -55,7 +55,14 @@ public class MCP23017DigitalOutputProviderImpl extends MicrochipDigitalOutputPro
     /** {@inheritDoc} */
     @Override
     public DigitalOutput create(DigitalOutputConfig config) {
-        return new MicrochipDigitalOutput(this, config);
+
+        // validate provider setup
+        if(this.device == null){
+            throw new ProviderException("MCP23017DigitalOutputProvider::setup(...) has not been called; this provider must be configured using the setup() method prior to creating I/O instances.");
+        }
+
+        // create new output I/O instance
+        return new MicrochipDigitalOutput(this, device, config);
     }
 
     @Override
@@ -63,23 +70,26 @@ public class MCP23017DigitalOutputProviderImpl extends MicrochipDigitalOutputPro
 
         // validate arguments exists
         if(args == null || args.length <= 0){
-            throw new ProviderException("MCP23017DigitalInputProvider::setup(...) is missing required arguments parameter.");
+            throw new ProviderException("MCP23017DigitalOutputProvider::setup(...) is missing required arguments parameter.");
         }
 
         // validate first argument is of type I2C
         if(!(args[0] instanceof I2C)){
-            throw new ProviderException("MCP23017DigitalInputProvider::setup(...) is missing required I2C parameter.");
+            throw new ProviderException("MCP23017DigitalOutputProvider::setup(...) is missing required I2C parameter.");
         }
 
-        // set internal I2C reference
-        this.i2c = (I2C) args[0];
+        // validate first call to setup
+        if(this.device != null){
+            throw new ProviderException("MCP23017DigitalOutputProvider::setup(...) has already been called; this method is not reentrant.");
+        }
 
-        // TODO :: Initialize communication with I2C; validate communication with I2C
-        //initializeI2C();
+        // create RAW device to communicate with chip via I2C instance
+        this.device = new MCP23017Device ((I2C) args[0]);
     }
 
     @Override
     public void setup(I2C i2c) throws ProviderException {
-        this.setup((i2c));
+        Object[] args = new Object[] { i2c };
+        this.setup(args);
     }
 }

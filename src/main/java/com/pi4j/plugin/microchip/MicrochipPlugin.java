@@ -34,8 +34,6 @@ import com.pi4j.extension.Plugin;
 import com.pi4j.extension.PluginService;
 import com.pi4j.plugin.microchip.mcp23017.provider.gpio.digital.MCP23017DigitalInputProvider;
 import com.pi4j.plugin.microchip.mcp23017.provider.gpio.digital.MCP23017DigitalOutputProvider;
-import com.pi4j.plugin.microchip.provider.gpio.digital.MicrochipDigitalInputProvider;
-import com.pi4j.plugin.microchip.provider.gpio.digital.MicrochipDigitalOutputProvider;
 import com.pi4j.provider.Provider;
 
 /**

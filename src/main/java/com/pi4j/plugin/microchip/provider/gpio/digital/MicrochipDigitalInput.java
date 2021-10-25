@@ -40,8 +40,7 @@ import com.pi4j.io.gpio.digital.*;
  * @version $Id: $Id
  */
 public class MicrochipDigitalInput extends DigitalInputBase implements DigitalInput {
-    private final int pin;
-    private DigitalState state = DigitalState.LOW;
+    protected final MicrochipGpioDevice device;
 
     /**
      * <p>Constructor for MicrochipDigitalInput.</p>
@@ -49,9 +48,9 @@ public class MicrochipDigitalInput extends DigitalInputBase implements DigitalIn
      * @param provider a {@link com.pi4j.io.gpio.digital.DigitalInputProvider} object.
      * @param config a {@link com.pi4j.io.gpio.digital.DigitalInputConfig} object.
      */
-    public MicrochipDigitalInput(MicrochipDigitalInputProvider provider, DigitalInputConfig config){
+    public MicrochipDigitalInput(MicrochipDigitalInputProvider provider, MicrochipGpioDevice device, DigitalInputConfig config){
         super(provider, config);
-        this.pin = config.address().intValue(); // obtain PIN numerical address from config
+        this.device = device;
     }
 
     /** {@inheritDoc} */
@@ -59,45 +58,43 @@ public class MicrochipDigitalInput extends DigitalInputBase implements DigitalIn
     public DigitalInput initialize(Context context) throws InitializeException {
         super.initialize(context);
 
-        // TODO :: Implement GPIO INPUT pin initialization
-        // TODO :: Implement GPIO INPUT pin initial state
-        // TODO :: Implement GPIO INPUT pin pull resistance
-        // TODO :: Implement GPIO INPUT pin mode
-        // TODO :: Implement GPIO INPUT pin debounce
+        // GPIO INPUT pin initialization
+        // initialize this I/O instance with the underlying hardware chip
+        // perform any communication with the hardware to configure this chip for INPUT
+        device.initialize(this);
 
-        // if configured, set GPIO pin pull resistance
-//        switch(config.pull()){
-//            case PULL_DOWN:{
-//                break;
-//            }
-//            case PULL_UP:{
-//                break;
-//            }
-//        }
+        // configure GPIO INPUT pin pull resistance on the underlying hardware chip
+        if(config.pull() != PullResistance.OFF) {
+            device.pull(this, config.pull());
+        }
 
         // if configured, set GPIO debounce
-//        if(this.config.debounce() != null) {
-//        }
+        if(this.config.debounce() != null) {
+            // TODO :: Implement GPIO INPUT pin debounce
+        }
 
+        // return this IO instance
         return this;
     }
 
     /** {@inheritDoc} */
     @Override
     public DigitalState state() {
-        try {
-            // TODO :: Implement GPIO INPUT pin state query
-            return this.state;
-        } catch (Exception e){
-            logger.error(e.getMessage(), e);
-            return DigitalState.UNKNOWN;
-        }
+        // get IO instance digital state from underlying hardware chip
+        // return this IO instance
+        return device.state(this);
     }
 
     /** {@inheritDoc} */
     @Override
     public DigitalInput shutdown(Context context) throws ShutdownException {
-        // TODO :: Implement GPIO INPUT pin shutdown logic
-        return super.shutdown(context);
+        // perform any shutdown required
+        super.shutdown(context);
+
+        // perform any shutdown required on the hardware chip
+        device.shutdown(this, context);
+
+        // return this IO instance
+        return this;
     }
 }

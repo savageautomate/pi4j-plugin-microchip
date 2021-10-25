@@ -41,6 +41,8 @@ public abstract class MicrochipDigitalInputProviderBase extends DigitalInputProv
 
     /**
      * <p>Constructor for MockDigitalInputProviderImpl.</p>
+     * @param id
+     * @param name
      */
     public MicrochipDigitalInputProviderBase(String id, String name){
     }

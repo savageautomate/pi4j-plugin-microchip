@@ -41,8 +41,10 @@ public abstract class MicrochipDigitalOutputProviderBase extends DigitalOutputPr
 
     /**
      * <p>Constructor for MockDigitalOutputProviderImpl.</p>
+     * @param id
+     * @param name
      */
-    public MicrochipDigitalOutputProviderBase(String id, String  name){
+    public MicrochipDigitalOutputProviderBase(String id, String name){
         this.id = id;
         this.name = name;
     }
