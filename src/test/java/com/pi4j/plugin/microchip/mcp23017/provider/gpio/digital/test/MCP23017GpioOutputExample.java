@@ -12,11 +12,11 @@ import com.pi4j.plugin.mock.provider.i2c.MockI2CProvider;
 public class MCP23017GpioOutputExample {
 
     private static final int PIN_LED = MCP23017.GPA0;
+    private static final int MCP23017_I2C_ADDRESS = MCP23017.DEFAULT_ADDRESS;
     private static final int MCP23017_I2C_BUS = 1;
 
     /**
-     * This application blinks a led and counts the number the button is pressed. The blink speed increases with each
-     * button press, and after 5 presses the application finishes.
+     * Sample application using MCP23017 GPIO expansion chip.
      *
      * @param args an array of {@link java.lang.String} objects.
      * @throws java.lang.Exception if any.
@@ -48,7 +48,7 @@ public class MCP23017GpioOutputExample {
         System.out.println("----------------------------------------------------------");
 
         // create I2C instance for communication with MCP23017
-        I2C mcp23017_i2c = pi4j.i2c().create(MCP23017_I2C_BUS, MCP23017.DEFAULT_ADDRESS);
+        I2C mcp23017_i2c = pi4j.i2c().create(MCP23017_I2C_BUS, MCP23017_I2C_ADDRESS);
 
         // if we don't have an immediate reference to the actual provider,
         // we can obtain it from the Pi4J context using it's ID string
