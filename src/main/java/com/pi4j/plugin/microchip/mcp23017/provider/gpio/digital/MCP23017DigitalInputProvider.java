@@ -30,6 +30,7 @@ package com.pi4j.plugin.microchip.mcp23017.provider.gpio.digital;
 import com.pi4j.io.i2c.I2C;
 import com.pi4j.plugin.microchip.MicrochipPlugin;
 import com.pi4j.plugin.microchip.mcp23017.MCP23017;
+import com.pi4j.plugin.microchip.mcp23017.provider.gpio.digital.impl.MCP23017DigitalInputProviderImpl;
 import com.pi4j.plugin.microchip.provider.gpio.digital.MicrochipDigitalInputProvider;
 
 /**

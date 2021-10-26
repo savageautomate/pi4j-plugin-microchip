@@ -30,6 +30,7 @@ package com.pi4j.plugin.microchip.mcp23017.provider.gpio.digital;
 import com.pi4j.io.i2c.I2C;
 import com.pi4j.plugin.microchip.MicrochipPlugin;
 import com.pi4j.plugin.microchip.mcp23017.MCP23017;
+import com.pi4j.plugin.microchip.mcp23017.provider.gpio.digital.impl.MCP23017DigitalOutputProviderImpl;
 import com.pi4j.plugin.microchip.provider.gpio.digital.MicrochipDigitalOutputProvider;
 
 /**
@@ -39,8 +40,8 @@ import com.pi4j.plugin.microchip.provider.gpio.digital.MicrochipDigitalOutputPro
  * @version $Id: $Id
  */
 public interface MCP23017DigitalOutputProvider extends MicrochipDigitalOutputProvider, MCP23017 {
-    String NAME = MicrochipPlugin.DIGITAL_OUTPUT_PROVIDER_NAME;
-    String ID = MicrochipPlugin.DIGITAL_OUTPUT_PROVIDER_ID;
+    String NAME = MicrochipPlugin.MCP23017_DIGITAL_OUTPUT_PROVIDER_NAME;
+    String ID = MicrochipPlugin.MCP23017_DIGITAL_OUTPUT_PROVIDER_ID;
 
     /**
      * <p>newInstance.</p>

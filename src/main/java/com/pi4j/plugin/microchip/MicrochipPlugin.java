@@ -52,12 +52,12 @@ public class MicrochipPlugin implements Plugin {
     public static final String MCP23017_ID = "mcp23017";
 
     // Digital Input (GPIO) Provider name and unique ID
-    public static final String MCP23017_DIGITAL_INPUT_PROVIDER_NAME = NAME +  " Digital Input (GPIO) Provider";
-    public static final String MCP23017_DIGITAL_INPUT_PROVIDER_ID = ID + "-digital-input";
+    public static final String MCP23017_DIGITAL_INPUT_PROVIDER_NAME = MCP23017_NAME +  " Digital Input (GPIO) Provider";
+    public static final String MCP23017_DIGITAL_INPUT_PROVIDER_ID = MCP23017_ID + "-digital-input";
 
     // Digital Output (GPIO) Provider name and unique ID
-    public static final String DIGITAL_OUTPUT_PROVIDER_NAME = NAME +  " Digital Output (GPIO) Provider";
-    public static final String DIGITAL_OUTPUT_PROVIDER_ID = ID + "-digital-output";
+    public static final String MCP23017_DIGITAL_OUTPUT_PROVIDER_NAME = MCP23017_NAME +  " Digital Output (GPIO) Provider";
+    public static final String MCP23017_DIGITAL_OUTPUT_PROVIDER_ID = MCP23017_ID + "-digital-output";
 
     /** {@inheritDoc} */
     @Override

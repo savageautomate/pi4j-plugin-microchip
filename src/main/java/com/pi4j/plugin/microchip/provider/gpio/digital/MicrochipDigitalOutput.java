@@ -88,6 +88,18 @@ public class MicrochipDigitalOutput extends DigitalOutputBase implements Digital
         return super.state(state);
     }
 
+//    /** {@inheritDoc}
+//     * We override this method to perform an explicit query for I/O pin
+//     * instance state against the hardware chip directly rather than
+//     * obtaining last known state from cache
+//     * */
+//    @Override
+//    public DigitalState state() {
+//        // get IO instance digital state from underlying hardware chip
+//        // return this IO instance
+//        return device.state(this);
+//    }
+
     /** {@inheritDoc} */
     @Override
     public DigitalOutput shutdown(Context context) throws ShutdownException {

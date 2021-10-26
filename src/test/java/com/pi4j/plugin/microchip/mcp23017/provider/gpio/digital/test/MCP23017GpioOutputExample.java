@@ -11,7 +11,7 @@ import com.pi4j.plugin.mock.provider.i2c.MockI2CProvider;
 
 public class MCP23017GpioOutputExample {
 
-    private static final int PIN_LED = MCP23017.GPA0;
+    private static final int PIN_LED = MCP23017.GPA1;
     private static final int MCP23017_I2C_ADDRESS = MCP23017.DEFAULT_ADDRESS;
     private static final int MCP23017_I2C_BUS = 1;
 
@@ -50,12 +50,28 @@ public class MCP23017GpioOutputExample {
         // create I2C instance for communication with MCP23017
         I2C mcp23017_i2c = pi4j.i2c().create(MCP23017_I2C_BUS, MCP23017_I2C_ADDRESS);
 
+        // create some fake data for the MOCK I2C
+        mcp23017_i2c.writeRegister(MCP23017.REGISTER_GPIO_A, 0x00);
+        mcp23017_i2c.writeRegister(MCP23017.REGISTER_GPIO_B, 0x00);
+        mcp23017_i2c.writeRegister(MCP23017.REGISTER_GPPU_A, 0x00);
+        mcp23017_i2c.writeRegister(MCP23017.REGISTER_GPPU_B, 0x00);
+        mcp23017_i2c.writeRegister(MCP23017.REGISTER_GPINTEN_A, 0x00);
+        mcp23017_i2c.writeRegister(MCP23017.REGISTER_GPINTEN_B, 0x00);
+        mcp23017_i2c.writeRegister(MCP23017.REGISTER_IODIR_A, 0x00);
+        mcp23017_i2c.writeRegister(MCP23017.REGISTER_IODIR_B, 0x00);
+        Thread.sleep(100);
+
         // if we don't have an immediate reference to the actual provider,
         // we can obtain it from the Pi4J context using it's ID string
         MCP23017DigitalOutputProvider provider = pi4j.provider(MCP23017DigitalOutputProvider.ID);
 
         // TODO :: we need to configure the MCP23017 provider with the necessary I2C instance
         provider.setup(mcp23017_i2c);
+
+        System.out.println("----------------------------------------------------------");
+        System.out.println("CREATE GPIO OUTPUT PIN");
+        System.out.println("----------------------------------------------------------");
+        Thread.sleep(50);
 
         // Here we will create I/O interfaces for a (GPIO) digital output
         // pin. We will use the MCP23017 digital output provider
@@ -64,19 +80,36 @@ public class MCP23017GpioOutputExample {
                 .name("LED Flasher")
                 .address(PIN_LED)
                 .shutdown(DigitalState.LOW)
-                .initial(DigitalState.LOW);
+                .initial(DigitalState.LOW)
+                .build();
 
         // create the LED output GPIO pin instance
         var led = provider.create(ledConfig);
+        System.out.println("----> GPIO CURRENT STATE: " + led.state());
 
         System.out.println("----------------------------------------------------------");
         System.out.println("PI4J I/O REGISTRY");
         System.out.println("----------------------------------------------------------");
         pi4j.registry().describe().print(System.out);
-        System.out.println("----------------------------------------------------------");
 
         // turn LED to the HIGH state
+        System.out.println("----------------------------------------------------------");
+        System.out.println("SET GPIO PIN TO HIGH STATE");
+        System.out.println("----------------------------------------------------------");
+        Thread.sleep(50);
         led.high();
-        Thread.sleep(2000);
+        System.out.println("----> GPIO CURRENT STATE: " + led.state());
+
+        System.out.println("----------------------------------------------------------");
+        System.out.println("SLEEPING FOR 5 SECONDS");
+        System.out.println("----------------------------------------------------------");
+        for(int index = 0; index < 100; index++)
+            Thread.sleep(50);
+
+        System.out.println("----------------------------------------------------------");
+        System.out.println("SHUTDOWN");
+        System.out.println("----------------------------------------------------------");
+        Thread.sleep(50);
+        pi4j.shutdown();
     }
 }

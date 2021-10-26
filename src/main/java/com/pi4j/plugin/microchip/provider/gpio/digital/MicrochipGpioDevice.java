@@ -12,5 +12,6 @@ public interface MicrochipGpioDevice  {
     DigitalState state(Digital io);
     void state(Digital io, DigitalState state) throws IOException;
     void shutdown(Digital io, Context context) throws ShutdownException;
+    PullResistance pull(Digital io);
     void pull(Digital io, PullResistance resistance);
 }

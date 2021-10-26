@@ -56,6 +56,8 @@ public interface MCP23017 {
     static final byte REGISTER_GPIO_A = 0x12;
     static final byte REGISTER_GPIO_B = 0x13;
 
-    static final int GPIO_A_OFFSET = 0;
-    static final int GPIO_B_OFFSET = 8;
+    static final int GPIO_A_OFFSET   = 0;
+    static final int GPIO_A_PINCOUNT = 8;
+    static final int GPIO_B_OFFSET   = 8;
+    static final int GPIO_B_PINCOUNT = 8;
 }

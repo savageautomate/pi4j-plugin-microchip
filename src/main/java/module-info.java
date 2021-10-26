@@ -32,6 +32,8 @@ module com.pi4j.plugin.pigpio {
 
     exports com.pi4j.plugin.microchip;
     exports com.pi4j.plugin.microchip.provider.gpio.digital;
+    exports com.pi4j.plugin.microchip.mcp23017;
+    exports com.pi4j.plugin.microchip.mcp23017.provider.gpio.digital;
 
     provides com.pi4j.extension.Plugin
             with com.pi4j.plugin.microchip.MicrochipPlugin;
