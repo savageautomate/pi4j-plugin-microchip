@@ -22,13 +22,16 @@ public class MCP23017Device implements MCP23017, MicrochipGpioDevice {
         // set local reference to I2C instance
         this.i2c = i2c;
 
-        // set all default pin interrupt default values
-        i2c.writeRegister(REGISTER_DEFVAL_A, (byte) 0x00);
-        i2c.writeRegister(REGISTER_DEFVAL_B, (byte) 0x00);
+        // atomic operation to configure chip registers
+        synchronized (this.i2c) {
+            // set all default pin interrupt default values
+            this.i2c.writeRegister(REGISTER_DEFVAL_A, (byte) 0x00);
+            this.i2c.writeRegister(REGISTER_DEFVAL_B, (byte) 0x00);
 
-        // set all default pin interrupt comparison behaviors
-        i2c.writeRegister(REGISTER_INTCON_A, (byte) 0x00);
-        i2c.writeRegister(REGISTER_INTCON_B, (byte) 0x00);
+            // set all default pin interrupt comparison behaviors
+            this.i2c.writeRegister(REGISTER_INTCON_A, (byte) 0x00);
+            this.i2c.writeRegister(REGISTER_INTCON_B, (byte) 0x00);
+        }
     }
 
     /**
@@ -240,35 +243,38 @@ public class MCP23017Device implements MCP23017, MicrochipGpioDevice {
 
     private void setPinMode(int pin, byte directionRegister, byte interruptRegister, Digital io) {
 
-        // --------------- PIN DIRECTION ---------------
+        // atomic operation to query current pin direction & interrupts and then update pin direction & interrupts
+        synchronized (this.i2c) {
+            // --------------- PIN DIRECTION ---------------
 
-        // get current pin direction register value from hardware
-        byte direction = i2c.readRegisterByte(directionRegister);
+            // get current pin direction register value from hardware
+            byte direction = i2c.readRegisterByte(directionRegister);
 
-        // determine update direction value based on mode
-        if (io instanceof DigitalInput) {
-            direction |= pinBit(pin);   // SET PIN DIRECTION TO INPUT (for digital inputs)
-        } else if (io instanceof DigitalOutput) {
-            direction &= ~pinBit(pin);  // SET PIN DIRECTION TO OUTPUT (for digital outputs)
+            // determine update direction value based on mode
+            if (io instanceof DigitalInput) {
+                direction |= pinBit(pin);   // SET PIN DIRECTION TO INPUT (for digital inputs)
+            } else if (io instanceof DigitalOutput) {
+                direction &= ~pinBit(pin);  // SET PIN DIRECTION TO OUTPUT (for digital outputs)
+            }
+
+            // next update direction value
+            i2c.writeRegister(directionRegister, direction);
+
+            // --------------- PIN INTERRUPT ---------------
+
+            // get current pin interrupt register value from hardware
+            byte interrupt = i2c.readRegisterByte(interruptRegister);
+
+            // determine update interrupt value based on mode
+            if (io instanceof DigitalInput) {
+                interrupt |= pinBit(pin);   // ENABLE PIN INTERRUPT (for digital inputs)
+            } else if (io instanceof DigitalOutput) {
+                interrupt &= ~pinBit(pin);  // DISABLE PIN INTERRUPT (for digital outputs)
+            }
+
+            // enable interrupts; interrupt on any change from previous state
+            i2c.writeRegister(interruptRegister, interrupt);
         }
-
-        // next update direction value
-        i2c.writeRegister(directionRegister, direction);
-
-        // --------------- PIN INTERRUPT ---------------
-
-        // get current pin interrupt register value from hardware
-        byte interrupt = i2c.readRegisterByte(interruptRegister);
-
-        // determine update interrupt value based on mode
-        if (io instanceof DigitalInput) {
-            interrupt |= pinBit(pin);   // ENABLE PIN INTERRUPT (for digital inputs)
-        } else if (io instanceof DigitalOutput) {
-            interrupt &= ~pinBit(pin);  // DISABLE PIN INTERRUPT (for digital outputs)
-        }
-
-        // enable interrupts; interrupt on any change from previous state
-        i2c.writeRegister(interruptRegister, interrupt);
     }
 
     private DigitalState getPinState(int pin, byte register){
@@ -281,19 +287,21 @@ public class MCP23017Device implements MCP23017, MicrochipGpioDevice {
     }
 
     private void setPinState(int pin, byte register, DigitalState state) throws IOException {
+        // atomic operation to query current pin states and then update pin states
+        synchronized (this.i2c) {
+            // get current state register values from hardware chip
+            byte states = i2c.readRegisterByte(register);
 
-        // get current state register values from hardware chip
-        byte states = i2c.readRegisterByte(register);
+            // determine new state register value for pin bit
+            if (state.isHigh()) {
+                states |= pinBit(pin);
+            } else {
+                states &= ~pinBit(pin);
+            }
 
-        // determine new state register value for pin bit
-        if (state.isHigh()) {
-            states |= pinBit(pin);
-        } else {
-            states &= ~pinBit(pin);
+            // update state register value on hardware chip
+            i2c.writeRegister(register, states);
         }
-
-        // update state register value on hardware chip
-        i2c.writeRegister(register, states);
     }
 
     private PullResistance getPinPullResistance(int pin, byte register) throws IOException {
@@ -307,17 +315,21 @@ public class MCP23017Device implements MCP23017, MicrochipGpioDevice {
 
     private void setPinPullResistance(int pin, byte register, PullResistance resistance) throws IOException {
 
-        // get current pull-up register
-        byte pullup = i2c.readRegisterByte(register);
+        // atomic operation to query current pin pull-ups and then update pin pull-ups register
+        synchronized (this.i2c) {
 
-        // determine pull up value for pin bit
-        if (resistance == PullResistance.PULL_UP) {
-            pullup |= pinBit(pin);
-        } else {
-            pullup &= ~pinBit(pin);
+            // get current pull-up register
+            byte pullup = i2c.readRegisterByte(register);
+
+            // determine pull up value for pin bit
+            if (resistance == PullResistance.PULL_UP) {
+                pullup |= pinBit(pin);
+            } else {
+                pullup &= ~pinBit(pin);
+            }
+
+            // next update pull up resistor value
+            i2c.writeRegister(register, pullup);
         }
-
-        // next update pull up resistor value
-        i2c.writeRegister(register, pullup);
     }
 }
